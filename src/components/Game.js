@@ -1,8 +1,6 @@
 // Dependencies
 import React, {Component} from 'react';
-import {characters} from '../utils/constants';
-import {monsters} from '../utils/constants';
-import { critMultiplier } from "../utils/constants";
+import { characters, monsters, critMultiplier, firstLvlExp, STATE_PLAY, STATE_GAME_OVER } from '../utils/constants';
 
 class Game extends Component {
     constructor(props) {
@@ -11,7 +9,9 @@ class Game extends Component {
             character: null,
             name: props.match.params.name,
             monster: null,
-            turn: true
+            turn: true,
+            nextLvl: firstLvlExp,
+            gameState: STATE_PLAY
         }
     }
 
@@ -54,12 +54,54 @@ class Game extends Component {
         this.changeTurn();
     };
 
+    /**
+     * Function for play game
+     */
     play = () =>{
+        // Check if game over
+        if(this.state.gameState === STATE_GAME_OVER) return;
+        // Do actions in turn
         this.turnActions();
+        // Check if one character die
         if(this.state.monster.vida <=0 || this.state.character.vida <= 0){
             clearInterval(this.state.playInterval);
         }
+        // Do actions when combat end
+        if(this.state.character.vida<=0){
+            this.gameOver();
+        }else if(this.state.monster.vida <=0){
+            this.winCombat();
+        }
+
     };
+
+    gameOver = () =>{
+        this.setState({gameState: STATE_GAME_OVER});
+        alert("Game over");
+    };
+
+    winCombat = () => {
+
+    };
+
+    handleLevel = () => {
+        let character = this.state.character;
+        let monster = this.state.monster;
+        let nextLvl = this.state.nextLvl;
+        let expDiff = nextLvl - monster.exp;
+        // TODO: RESTAR EXPDIFF
+        while(expDiff <= 0){
+            nextLvl *= 2;
+            expDiff = nextLvl - monster.exp;
+            character.lvl++;
+        }
+
+        this.setState({
+            character: {...this.state.character, character},
+            nextLvl: nextLvl
+        });
+    };
+
 
     /**
      * Function for attack
@@ -79,9 +121,13 @@ class Game extends Component {
         // get damage
         let damage = pointsAttack - objective.defensa;
         console.log(isCrit);
+        // if damage more tahn 0 then attack
         if (damage > 0){
             health -= damage;
         }
+        // If health less than 0 then put in 0
+        if(health < 0) health = 0;
+
         return health;
 
     }
