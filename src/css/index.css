@@ -11,3 +11,22 @@ body {
 .mt-2{
   margin-top: 2em;
 }
+
+.mt-5{
+  margin-top: 5em;
+}
+
+.vcenter{
+  display: flex;
+  align-items: center;
+}
+
+.imgCharacter{
+  max-width: 100%;
+  height: 300px;
+  margin-bottom: 2em;
+}
+
+.flex-start{
+  align-self: flex-start;
+}

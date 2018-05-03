@@ -1,3 +1,15 @@
+import asesino from '../images/assassin.jpg';
+import guerrero from '../images/warrior.png';
+import mago from '../images/mage.png';
+import boss from '../images/boss1.png';
+import boss2 from '../images/demon1.png';
+import boss3 from '../images/demon2.jpeg';
+import boss4 from '../images/demon3.png';
+import boss5 from '../images/magedark.png';
+import boss6 from '../images/monster.png';
+import boss7 from '../images/monster2.png';
+import boss8 from '../images/magedark2.png';
+
 export const characters = [
     {
         characterClass: "Guerrero",
@@ -8,7 +20,7 @@ export const characters = [
         critico: 1,
         upgradePoints: 0,
         lvl: 1,
-        image: "warrior.png"
+        image: guerrero
     },
     {
         characterClass: "Asesino",
@@ -19,7 +31,7 @@ export const characters = [
         critico: 7,
         upgradePoints: 0,
         lvl: 1,
-        image: "assassin.jpg"
+        image: asesino
     },
     {
         characterClass: "Mago",
@@ -30,7 +42,7 @@ export const characters = [
         critico: 4,
         upgradePoints: 0,
         lvl: 1,
-        image: "mage.png"
+        image: mago
     }
 ];
 
@@ -46,7 +58,8 @@ export const baseMonster =
         defensa: 1,
         critico: 1,
         exp: firstLvlExp,
-        lvl: 1
+        lvl: 1,
+        image: boss
     };
 
 export const monsters = [
@@ -57,12 +70,12 @@ export const monsters = [
         defensa: 1,
         critico: 1,
         exp: firstLvlExp,
-        lvl: 1
+        lvl: 1,
+        images: [boss, boss2, boss3, boss4, boss5, boss6, boss7, boss8]
     }
 ];
 
 export const critMultiplier = 2.5;
-
 export const STATE_PLAY = 'PLAY';
 export const STATE_GAME_OVER = 'GAMEOVER';
 export const STATE_PAUSE = 'PAUSE';

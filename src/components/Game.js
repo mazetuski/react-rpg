@@ -38,7 +38,8 @@ class Game extends Component {
             upgrade: false,
             upgradeChoose: null,
             kills: 0,
-            text: []
+            text: [],
+            monsterImage: ""
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,6 +49,7 @@ class Game extends Component {
     handleSubmit(event) {
         event.preventDefault();
         let character = this.state.character;
+        character.vida = character.vidaTotal;
         // Upgrade skills
         switch (this.state.upgradeChoose) {
             case "ataque":
@@ -57,7 +59,9 @@ class Game extends Component {
                 character.defensa += (character.upgradePoints * upgradeSkill);
                 break;
             case "vida":
-                character.vida += (character.upgradePoints * upgradeSkill);
+                let vidaSum = character.upgradePoints * upgradeSkill;
+                character.vida += vidaSum;
+                character.vidaTotal += vidaSum;
                 break;
         }
         // reset upgrade points
@@ -78,7 +82,7 @@ class Game extends Component {
      */
     resetGameMonster = () => {
         this.generateMonster();
-        this.state.playInterval = setInterval(this.play, 2000);
+        this.state.playInterval = setInterval(this.play, 1500);
     };
 
     handleChange(event) {
@@ -92,9 +96,12 @@ class Game extends Component {
             }
         });
         this.state.character.name = this.state.name;
+        this.state.character.vidaTotal = this.state.character.vida;
         this.state.monster = monsters[0];
+        this.state.monster.vidaTotal = monsters[0].vida;
+        this.state.monsterImage = this.state.monster.images[0];
         this.state.monster.class = "Monstruo débil";
-        this.state.playInterval = setInterval(this.play, 2000);
+        this.state.playInterval = setInterval(this.play, 1500);
     };
 
     /**
@@ -203,12 +210,18 @@ class Game extends Component {
     generateMonster = () => {
         let monster = this.state.monster;
         let kills = this.state.kills;
-        monster.vida = baseMonster.vida + (kills * 5);
+        let vidaSum = baseMonster.vida + (kills * 5);
+        monster.vida = vidaSum;
+        monster.vidaTotal = vidaSum;
         monster.ataque = baseMonster.ataque + (kills * 3);
         monster.defensa = baseMonster.defensa + kills;
         monster.exp = baseMonster.exp + (kills * 4);
+        // TODO: elegir imagen aleatoria
+        let rand = Math.random() * monster.images.length;
+        let image = monster.images[Math.floor(rand)];
         this.setState({
-            monster: monster
+            monster: monster,
+            monsterImage: image
         });
 
         this.addText("NUEVO MONSTRUO EN LA SALA");
@@ -267,8 +280,8 @@ class Game extends Component {
         }
         let textState = "<p className='" + classname + "'>" + text + "</p>";
         this.setState({text: [textState, ...this.state.text]});
-        if (this.state.text.length < 8) return;
-        while (this.state.text.length > 8) {
+        if (this.state.text.length < 15) return;
+        while (this.state.text.length > 15) {
             this.state.text.pop();
         }
 
@@ -277,30 +290,33 @@ class Game extends Component {
     render() {
         return (
             <div>
-                <div className="col-md-12">
-                    <div className="col-md-2 col-md-offset-4 text-left mt-2">
-                        <img src="" alt=""/>
+                <div className="col-md-12 vcenter">
+                    <div className="col-md-3 col-md-offset-3 text-center mt-2">
+                        <img className="imgCharacter" src={this.state.character.image} alt=""/>
                         <h4>Nombre: {this.state.name}</h4>
                         <h4>Clase: {this.state.character.characterClass}</h4>
-                        <h4>Vida: {this.state.character.vida}</h4>
+                        <h4>Vida: {this.state.character.vida +"/"+ this.state.character.vidaTotal}</h4>
                         <h4>Ataque: {this.state.character.ataque}</h4>
                         <h4>Defensa: {this.state.character.defensa}</h4>
                         <h4>Level: {this.state.character.lvl}</h4>
                         <h4>Next level: {this.state.nextLvl} Exp</h4>
                     </div>
-                    <div className="col-md-2 text-left mt-2">
+                    {/*
+                  */}
+                    <div className="col-md-3 text-center mt-2">
+                        <img className="imgCharacter" src={this.state.monsterImage} alt=""/>
                         <h4>Nombre: {this.state.monster.name}</h4>
                         <h4>Clase: {this.state.monster.class}</h4>
-                        <h4>Vida: {this.state.monster.vida}</h4>
+                        <h4>Vida: {this.state.monster.vida+"/"+ this.state.monster.vidaTotal}</h4>
                         <h4>Ataque: {this.state.monster.ataque}</h4>
                         <h4>Defensa: {this.state.monster.defensa}</h4>
                         <h4>Exp: {this.state.monster.exp}</h4>
                     </div>
-                </div>
-                <div className="col-md-12 mt-2">
-                    {this.state.text.map(e =>
-                        <div dangerouslySetInnerHTML={{__html: e}}/>
-                    )}
+                    <div className="col-md-3 mt-5 flex-start">
+                        {this.state.text.map(e =>
+                            <div dangerouslySetInnerHTML={{__html: e}}/>
+                        )}
+                    </div>
                 </div>
                 <Modal
                     isOpen={this.state.upgrade}
